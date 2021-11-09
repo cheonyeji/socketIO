@@ -16,7 +16,9 @@ const socketController = (socket, io) => {
   });
 
   socket.on("sendMsg", ({ message }) =>
-    socket.broadcast.emit("newMsg", { message, nickname: socket.nickname })
+    io
+      .to(socket.roomId)
+      .emit("newMsg", { message, nickname: socket.nickname, id: socket.id })
   );
 
   socket.on("addRoom", ({ message }) => {
@@ -24,7 +26,11 @@ const socketController = (socket, io) => {
     // 방 추가해주면 됨
     room_info.push({ roomId: message });
     io.emit("updateRoom", { room_info });
-    console.log(room_info);
+  });
+
+  socket.on("enterRoom", ({ roomId }) => {
+    socket.join(roomId);
+    socket.roomId = roomId;
   });
 };
 
