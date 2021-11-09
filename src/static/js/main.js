@@ -11,9 +11,10 @@ var _sockets = require("./sockets");
 var messages = document.getElementById("jsMessages");
 var sendMsg = document.getElementById("jsSendMsg");
 
-var appendMsg = function appendMsg(text, nickname) {
+var appendMsg = function appendMsg(text, nickname, id) {
   var li = document.createElement("li");
-  li.innerHTML = "\n        <span class=\"author ".concat(nickname ? "out" : "self", "\">").concat(nickname ? nickname : "You", ":</span> ").concat(text, "\n    ");
+  console.log((0, _sockets.getSocket)());
+  li.innerHTML = "\n        <span class=\"author ".concat(id !== (0, _sockets.getSocket)().id ? "out" : "self", "\">").concat(id !== (0, _sockets.getSocket)().id ? nickname : "You", ":</span> ").concat(text, "\n    ");
   messages.appendChild(li);
 };
 
@@ -24,14 +25,14 @@ var handleSendMsg = function handleSendMsg(event) {
   input.value = "";
   (0, _sockets.getSocket)().emit("sendMsg", {
     message: value
-  });
-  appendMsg(value);
+  }); // appendMsg(value); 두번 안되게!
 };
 
 var handleNewMessage = function handleNewMessage(_ref) {
   var message = _ref.message,
-      nickname = _ref.nickname;
-  return appendMsg(message, nickname);
+      nickname = _ref.nickname,
+      id = _ref.id;
+  return appendMsg(message, nickname, id);
 };
 
 exports.handleNewMessage = handleNewMessage;
@@ -135,6 +136,8 @@ var _sockets = require("./sockets");
 var clients = document.getElementById("jsClients");
 var rooms = document.getElementById("jsRooms");
 var addRoom = document.getElementById("jsAddRoom");
+var roomWrapper = document.querySelector(".room");
+var messages = document.getElementById("jsMessages");
 
 var updateClients = function updateClients(client_list) {
   while (clients.hasChildNodes()) {
@@ -148,6 +151,22 @@ var updateClients = function updateClients(client_list) {
   });
 };
 
+var handleRoomClick = function handleRoomClick(roomId) {
+  if (confirm("".concat(roomId, "\uC73C\uB85C \uC811\uC18D\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?"))) {
+    // 예 버튼 클릭시
+    (0, _sockets.getSocket)().emit("enterRoom", {
+      roomId: roomId
+    });
+    roomWrapper.classList.add("joined");
+
+    while (messages.hasChildNodes()) {
+      messages.removeChild(messages.firstChild);
+    }
+  } else {
+    console.log("접속x");
+  }
+};
+
 var updateRooms = function updateRooms(room_list) {
   while (rooms.hasChildNodes()) {
     rooms.removeChild(rooms.firstChild);
@@ -156,6 +175,9 @@ var updateRooms = function updateRooms(room_list) {
   room_list.forEach(function (roomId) {
     var li = document.createElement("li");
     li.innerHTML = "".concat(roomId);
+    li.addEventListener("click", function () {
+      handleRoomClick(roomId);
+    });
     rooms.appendChild(li);
   });
 };
