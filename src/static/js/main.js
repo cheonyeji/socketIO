@@ -128,27 +128,13 @@ exports.handleDisconnected = handleDisconnected;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.handleUpdatePlayer = void 0;
+exports.handleUpdateRoom = exports.handleUpdatePlayer = void 0;
 
 var _sockets = require("./sockets");
 
 var clients = document.getElementById("jsClients");
 var rooms = document.getElementById("jsRooms");
 var addRoom = document.getElementById("jsAddRoom");
-
-var handleUpdatePlayer = function handleUpdatePlayer(_ref) {
-  var sockets = _ref.sockets;
-  var client_list = [];
-
-  for (var key in sockets) {
-    client_list.push(sockets[key].nickname);
-    console.log(sockets[key].nickname);
-  }
-
-  updateClients(client_list);
-};
-
-exports.handleUpdatePlayer = handleUpdatePlayer;
 
 var updateClients = function updateClients(client_list) {
   while (clients.hasChildNodes()) {
@@ -162,6 +148,18 @@ var updateClients = function updateClients(client_list) {
   });
 };
 
+var updateRooms = function updateRooms(room_list) {
+  while (rooms.hasChildNodes()) {
+    rooms.removeChild(rooms.firstChild);
+  }
+
+  room_list.forEach(function (roomId) {
+    var li = document.createElement("li");
+    li.innerHTML = "".concat(roomId);
+    rooms.appendChild(li);
+  });
+};
+
 var handleAddRoom = function handleAddRoom(event) {
   event.preventDefault();
   var input = addRoom.querySelector("input");
@@ -171,6 +169,32 @@ var handleAddRoom = function handleAddRoom(event) {
     message: value
   });
 };
+
+var handleUpdateRoom = function handleUpdateRoom(_ref) {
+  var room_info = _ref.room_info;
+  var room_list = [];
+
+  for (var key in room_info) {
+    room_list.push(room_info[key].roomId);
+  }
+
+  updateRooms(room_list);
+};
+
+exports.handleUpdateRoom = handleUpdateRoom;
+
+var handleUpdatePlayer = function handleUpdatePlayer(_ref2) {
+  var sockets = _ref2.sockets;
+  var client_list = [];
+
+  for (var key in sockets) {
+    client_list.push(sockets[key].nickname);
+  }
+
+  updateClients(client_list);
+};
+
+exports.handleUpdatePlayer = handleUpdatePlayer;
 
 if (addRoom) {
   addRoom.addEventListener("submit", handleAddRoom);
@@ -204,6 +228,7 @@ var initSockets = function initSockets(aSocket) {
   socket.on("disconnected", _notifications.handleDisconnected);
   socket.on("newMsg", _chat.handleNewMessage);
   socket.on("updatePlayer", _room.handleUpdatePlayer);
+  socket.on("updateRoom", _room.handleUpdateRoom);
 };
 
 exports.initSockets = initSockets;
