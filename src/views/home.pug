@@ -10,15 +10,16 @@ html(lang="en")
         .loginBox 
             form#jsLogin
                 input(placeholder="Enter your nickname", type="text")
-        .room 
-            ul.room__lists#jsRooms
-            form.room__form#jsAddRoom
-                input(placeholder="Add a new room", type="text")
-            ul.clients__lists#jsClients
-        .chatContainer
-            .chat
-                ul.chat__messages#jsMessages
-                form.chat__form#jsSendMsg
-                    input(placeholder="Write a message", type="text")
+        .room
+            .room__info 
+                ul.room__lists#jsRooms
+                form.room__form#jsAddRoom
+                    input(placeholder="Add a new room", type="text")
+                ul.clients__lists#jsClients
+            .chatContainer
+                .chat
+                    ul.chat__messages#jsMessages
+                    form.chat__form#jsSendMsg
+                        input(placeholder="Write a message", type="text")
         script(src="/socket.io/socket.io.js")
         script(src="/js/main.js")

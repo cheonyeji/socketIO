@@ -26,9 +26,14 @@ body {
     }
   }
   &.loggedIn {
-    .chatContainer,
     .room {
       display: block;
+      display: flex;
+      &.joined {
+        .chatContainer {
+          display: block;
+        }
+      }
     }
   }
 }
