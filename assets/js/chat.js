@@ -3,11 +3,12 @@ import { getSocket } from "./sockets";
 const messages = document.getElementById("jsMessages");
 const sendMsg = document.getElementById("jsSendMsg");
 
-const appendMsg = (text, nickname) => {
+const appendMsg = (text, nickname, id) => {
   const li = document.createElement("li");
+  console.log(getSocket());
   li.innerHTML = `
-        <span class="author ${nickname ? "out" : "self"}">${
-    nickname ? nickname : "You"
+        <span class="author ${id !== getSocket().id ? "out" : "self"}">${
+    id !== getSocket().id ? nickname : "You"
   }:</span> ${text}
     `;
   messages.appendChild(li);
@@ -19,11 +20,11 @@ const handleSendMsg = (event) => {
   const { value } = input;
   input.value = "";
   getSocket().emit("sendMsg", { message: value });
-  appendMsg(value);
+  // appendMsg(value); 두번 안되게!
 };
 
-export const handleNewMessage = ({ message, nickname }) =>
-  appendMsg(message, nickname);
+export const handleNewMessage = ({ message, nickname, id }) =>
+  appendMsg(message, nickname, id);
 
 if (sendMsg) {
   sendMsg.addEventListener("submit", handleSendMsg);
