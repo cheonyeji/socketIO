@@ -1,6 +1,6 @@
 import { handleNewMessage } from "./chat";
 import { handleDisconnected, handleNewUser } from "./notifications";
-import { handleEveryoneNoti } from "./room";
+import { handleUpdatePlayer } from "./room";
 
 let socket = null;
 
@@ -11,5 +11,5 @@ export const initSockets = (aSocket) => {
   socket.on("newUser", handleNewUser);
   socket.on("disconnected", handleDisconnected);
   socket.on("newMsg", handleNewMessage);
-  socket.on("everyoneNoti", handleEveryoneNoti);
+  socket.on("updatePlayer", handleUpdatePlayer);
 };

@@ -128,12 +128,15 @@ exports.handleDisconnected = handleDisconnected;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.handleEveryoneNoti = void 0;
+exports.handleUpdatePlayer = void 0;
+
+var _sockets = require("./sockets");
+
 var clients = document.getElementById("jsClients");
 var rooms = document.getElementById("jsRooms");
 var addRoom = document.getElementById("jsAddRoom");
 
-var handleEveryoneNoti = function handleEveryoneNoti(_ref) {
+var handleUpdatePlayer = function handleUpdatePlayer(_ref) {
   var sockets = _ref.sockets;
   var client_list = [];
 
@@ -145,7 +148,7 @@ var handleEveryoneNoti = function handleEveryoneNoti(_ref) {
   updateClients(client_list);
 };
 
-exports.handleEveryoneNoti = handleEveryoneNoti;
+exports.handleUpdatePlayer = handleUpdatePlayer;
 
 var updateClients = function updateClients(client_list) {
   while (clients.hasChildNodes()) {
@@ -159,13 +162,21 @@ var updateClients = function updateClients(client_list) {
   });
 };
 
-var handleAddRoom = function handleAddRoom() {};
+var handleAddRoom = function handleAddRoom(event) {
+  event.preventDefault();
+  var input = addRoom.querySelector("input");
+  var value = input.value;
+  input.value = "";
+  (0, _sockets.getSocket)().emit("addRoom", {
+    message: value
+  });
+};
 
 if (addRoom) {
   addRoom.addEventListener("submit", handleAddRoom);
 }
 
-},{}],6:[function(require,module,exports){
+},{"./sockets":6}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -192,7 +203,7 @@ var initSockets = function initSockets(aSocket) {
   socket.on("newUser", _notifications.handleNewUser);
   socket.on("disconnected", _notifications.handleDisconnected);
   socket.on("newMsg", _chat.handleNewMessage);
-  socket.on("everyoneNoti", _room.handleEveryoneNoti);
+  socket.on("updatePlayer", _room.handleUpdatePlayer);
 };
 
 exports.initSockets = initSockets;
